@@ -65,5 +65,18 @@ const userController = {
           })
           .then(() => res.json({ message: 'User and associated thoughts deleted.' }))
           .catch(err => res.status(500).json(err));
+    },
+
+    // add friend to friend list
+    addFriend({ params }, res) {
+        User.findOneAndUpdate({ _id: params.userId }, { $addToSet: { friends: params.friendId }}, { new: true })
+          .then(dbUserData => {
+              if(!dbUserData) {
+                  res.status(404).json({ message: 'No user found with this ID.' });
+                  return;
+              }
+              res.json(dbUserData);
+          })
+          .catch(err => res.status(500).json(err));
     }
 };
