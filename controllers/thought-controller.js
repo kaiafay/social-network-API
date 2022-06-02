@@ -23,6 +23,26 @@ const thoughtController = {
           })
           .catch(err => res.status(500).json(err));
     },
+
+    // create a thought
+    createThought(req, res) {
+        Thought.create(req.body)
+          .then(dbThoughtData => {
+              return User.findOneAndUpdate(
+                  { _id: req.body.userId },
+                  { $push: { thoughts: dbThoughtData._id }},
+                  { new: true }
+              );
+          })
+          .then(dbUserData => {
+              if(!dbUserData) {
+                  res.status(404).json({ message: 'Thought created but no user found with this ID.' });
+                  return;
+              }
+              res.json({ message: 'Thought created.' });
+          })
+          .catch(err => res.status(500).json(err));
+    },
 };
 
 module.exports = thoughtController;
