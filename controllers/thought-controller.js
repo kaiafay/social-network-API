@@ -9,6 +9,20 @@ const thoughtController = {
           .then(dbThoughtData => res.json(dbThoughtData))
           .catch(err => res.status(500).json(err));
     },
+
+    // get single thought by id
+    getThoughtById({ params }, res) {
+        Thought.findOne({ _id: params.thoughtId })
+          .select('-__v')
+          .then(dbThoughtData => {
+              if(!dbThoughtData) {
+                  res.status(404).json({ message: 'No thought found with this ID.' });
+                  return;
+              }
+              res.json(dbThoughtData);
+          })
+          .catch(err => res.status(500).json(err));
+    },
 };
 
 module.exports = thoughtController;
